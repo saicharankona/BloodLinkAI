@@ -1,4 +1,4 @@
-Architecture decisions and integration plan
+# Architecture decisions and integration plan
 - Status: Draft for team review
 - Primary owner: Member 1 — Backend, Security and Integration Coordinator
 - Reviewers: Members 2 and 3 for decisions affecting their owned areas
