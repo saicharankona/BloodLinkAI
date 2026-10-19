@@ -1,6 +1,6 @@
 # API contract
 
-- **Status:** Draft for team review
+- **Status:** Reviewed contract baseline — pending affected-member and administrator approval
 - **Primary owner:** Member 1 — Backend, Security and Integration Coordinator
 - **Reviewers:** Member 2 for persistence and validation behavior; Member 3 for gate and recommendation response semantics
 
