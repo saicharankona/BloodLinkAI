@@ -15,7 +15,7 @@
 
 ## Collections
 
-All fields below are required unless marked optional. Each organization-owned document has `_id` and `organization_id`.
+All fields below are required unless marked optional. Each organization-owned document has `_id` and `organization_id`. The `organizations` collection is the ownership root: its documents have `_id` but do not have an `organization_id` field. The `organizations` collection is the ownership root: its documents have `_id` but do not have an `organization_id` field.
 
 ### `organizations`
 
@@ -35,7 +35,7 @@ All fields below are required unless marked optional. Each organization-owned do
 | `is_active` | boolean | Inactive users cannot authenticate |
 | `created_at` | UTC datetime | Creation time |
 
-No public registration, password recovery, or administrator role is defined by this contract. Those require a separate approved requirement.
+No public registration, password recovery, or administrator role is defined by this contract. Those require a separate approved requirement. Because `email` is unique only within an organization, the login identifier must be approved as either an organization-qualified email or another unambiguous synthetic identifier before authentication is implemented.
 
 ### `donors`
 
@@ -72,7 +72,7 @@ The contract does not define or store patient identity or patient records.
 | `expires_at` | UTC datetime or null | Required to determine whether a verification is still current |
 | `updated_at` | UTC datetime | Last status change |
 
-Only explicitly verified, non-expired status can pass the eligibility gate. Verification authority, process, and expiry policy must be agreed before implementation. Donation history and model output are never eligibility evidence.
+Only explicitly verified, non-expired status can pass the eligibility gate. `verified_by_user_id` must refer to an active, same-organization staff user authorized under the approved role/action matrix. Verification authority, process, and expiry policy must be agreed before implementation. Donation history and model output are never eligibility evidence.
 
 ### `availability_opt_ins`
 
@@ -119,4 +119,5 @@ The feature set, cohort assumptions, and leakage checks require review before tr
 - Member 2 implements the persistence representation after this contract is reviewed.
 - Member 1 must confirm authentication, roles, organization context, and verification permissions with the team.
 - Member 3 must confirm which fields are needed for gates/ranking and the minimum safe response shape.
+- The API contract defines authentication/session behavior, role/action authorization, error envelopes, and evaluation-status semantics; this data contract does not override those rules.
 - Unresolved: authoritative compatibility source and reviewer; eligibility verifier and expiry policy; availability freshness; urgency categories; location precision; donation-history categories; synthetic ML feature definitions; and whether any contact reference is needed at all.
