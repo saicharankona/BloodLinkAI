@@ -118,7 +118,7 @@ If a required policy is unavailable, do not treat the value as validated merely 
 
 - `not_configured`: a required evaluator or policy is missing or unverified. Return no candidates and identify the blocking gate.
 - `completed`: every required gate policy was available and evaluated according to the recommendation contract. An empty `candidates` array means the evaluation completed but found no candidates passing every required gate.
-- `failed`: an operational failure prevented a safe evaluation. Do not return candidates or fabricate defaults; use the common error envelope and an appropriate HTTP error.
+- `failed`: an internal evaluation outcome used to record an operational failure. At the API boundary, return the common error envelope with an appropriate HTTP error rather than a recommendation result payload.
 
 Do not return `completed` when a required gate was skipped because its configuration was missing or unverified. Do not represent a database or unexpected operational failure as a valid empty result.
 
@@ -149,7 +149,7 @@ All errors use:
 }
 ```
 
-`field_errors` is optional and contains safe, field-specific messages. Use consistent machine-readable codes, including `authentication_required`, `forbidden`, `not_found`, `validation_error`, `csrf_failed`, `compatibility_not_configured`, and `service_unavailable`. Do not return stack traces, database details, secrets, or success-shaped fallback data. Database failures produce a safe `503` response and a server-side diagnostic without credentials or sensitive record contents.
+`field_errors` is optional and contains safe, field-specific messages. Use consistent machine-readable codes, including `authentication_required`, `forbidden`, `not_found`, `validation_error`, `csrf_failed`, `compatibility_not_configured`, and `service_unavailable`. For unexpected failures, use a stable code such as `internal_error`. Do not return stack traces, database details, secrets, or success-shaped fallback data. Database failures produce a safe `503` response and a server-side diagnostic without credentials or sensitive record contents.
 
 ### Error response rules
 
@@ -169,6 +169,8 @@ The team must agree on the status code for any additional domain-specific errors
 - Depends on reviewed data-model and recommendation contracts.
 - Member 1 owns route, session, CSRF, error, and organization enforcement implementation.
 - Members 2 and 3 review data and recommendation payloads before implementation.
+### Decisions requiring approval
+
 | Decision | Proposed owner(s) | Required before |
 |---|---|---|
 | Role-to-action matrix and overview permissions | Member 1; all affected members review | Protected-route implementation |
