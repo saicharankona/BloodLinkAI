@@ -1,6 +1,6 @@
 # Data model contract
 
-- **Status:** Draft for team review
+- **Status:** Reviewed contract baseline — pending affected-member and administrator approval
 - **Primary owner:** Member 2 — Database, Synthetic Data and Machine Learning
 - **Reviewers:** Member 1 for identity, organization, and access boundaries; Member 3 for recommendation inputs and gate states
 
@@ -15,7 +15,7 @@
 
 ## Collections
 
-All fields below are required unless marked optional. Each organization-owned document has `_id` and `organization_id`. The `organizations` collection is the ownership root: its documents have `_id` but do not have an `organization_id` field. The `organizations` collection is the ownership root: its documents have `_id` but do not have an `organization_id` field.
+All fields below are required unless marked optional. Each organization-owned document has `_id` and `organization_id`. The `organizations` collection is the ownership root: its documents have `_id` but do not have an `organization_id` field.
 
 ### `organizations`
 
