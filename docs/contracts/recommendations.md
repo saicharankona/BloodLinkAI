@@ -55,13 +55,13 @@ Allowed statuses are `pass`, `fail`, `not_configured`, and `not_evaluated`. Use 
 | Availability | `availability_stale` | Opt-in is outside its approved freshness window |
 | Any later gate | `blocked_by_compatibility` | Not evaluated because compatibility was not configured |
 
-When later gates are evaluated after a compatibility pass/fail, report their own outcomes. Do not treat a failed earlier gate as proof of any later gate outcome. Unknown, missing, stale, expired, and invalid timestamps never pass.
+When later gates are evaluated after a compatibility pass/fail, report their own outcomes only if the evaluation workflow is configured to evaluate them independently. If a later gate is not run because the workflow stops early, mark it `not_evaluated` with a reason that identifies the blocking condition. Do not treat a failed earlier gate as proof of any later gate outcome. Unknown, missing, stale, expired, and invalid timestamps never pass.
 
 ## Evaluation status and empty results
 
 - `not_configured`: a required evaluator/policy is missing; return no candidates and identify the blocked gate.
 - `completed`: all required gate policies were available and the request was evaluated. If no donor passes every gate, return an empty candidate list and gate-level counts/reasons.
-- `failed`: an operational failure prevented a safe evaluation; return no candidates and a safe API error rather than fabricated defaults.
+- `failed`: an internal evaluation outcome used to record that an operational failure prevented a safe evaluation. At the API boundary, return the API contract's common error envelope with an appropriate HTTP error; do not return a success-shaped recommendation result or candidates.
 
 Never use an empty result alone to conceal missing configuration. Compatibility `not_configured` is not a valid compatibility check that found zero matching candidates.
 
@@ -90,6 +90,16 @@ The Random Forest may contribute only an explicitly labeled estimate based on sy
 ## Dependencies and unresolved decisions
 
 - Depends on the data-model contract for verified eligibility, fresh opt-in, and synthetic ranking inputs.
-- Defines result semantics consumed by the API contract and dashboard.
+- Defines result semantics consumed by the API contract and dashboard. The API contract owns HTTP status codes and the common error envelope; operational failures must not be returned as successful recommendation payloads.
 - Member 3 owns gate orchestration, ranking, explanation, and recommendation QA implementation.
 - Unresolved: compatibility source/reviewer; eligibility verification authority/expiry; opt-in freshness; ranking factor formulas and weights; urgency and distance policy; tie-break; and optional ML inclusion.
+
+## Acceptance checks
+
+- Compatibility is `not_configured` until an authoritative source and reviewer are confirmed and configured.
+- No candidate is returned unless compatibility, verified eligibility, and fresh affirmative availability all pass.
+- A missing/unverified gate configuration is distinguishable from a completed evaluation with zero passing candidates.
+- Gate reason codes and statuses agree with the API and data-model contracts.
+- Ranking is deterministic for identical approved inputs and cannot override a hard gate.
+- Candidate responses contain no contact details or precise location.
+- Optional model output is clearly labeled as historical-response prediction and can be omitted safely.
