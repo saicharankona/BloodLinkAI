@@ -1,6 +1,6 @@
 # Recommendation contract
 
-- **Status:** Draft for team review
+- **Status:** Reviewed contract baseline — pending affected-member and administrator approval
 - **Primary owner:** Member 3 — Recommendation Engine, Dashboard and QA
 - **Reviewers:** Member 1 for API/auth/error behavior; Member 2 for available and validated repository fields
 
